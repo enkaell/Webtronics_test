@@ -12,12 +12,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_user_id_by_username(username: str, db: Session):
-    return True if db.query(User).filter_by(username=username).one_or_none().id else False
+    return db.query(User).filter_by(username=username).one_or_none().id
 
 
 def validate_password(plain_password, hashed_password):
     if not pwd_context.verify(plain_password, hashed_password):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
 
 
 def get_password_hash(password):
@@ -25,7 +25,7 @@ def get_password_hash(password):
 
 
 def validate_register_data(user, db: Session, form_data: dict):
-    if db.query(User).filter(or_(User.username == form_data.username, User.mail == user.mail)).one_or_none():
+    if db.query(User).filter(or_(User.username == form_data.username, User.mail == user.mail)).all():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
     response = requests.get('https://hunter.io/v2/email-count', params={'domain': user.mail, 'format': 'json'})
     if response.json().get('data')['total'] == 0:
@@ -49,4 +49,4 @@ def login_user(db: Session, form_data: dict):
         db.add(user)
         db.commit()
         return user.token
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

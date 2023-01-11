@@ -10,7 +10,7 @@ from users.utils import validate_register_data, login_user, get_user_id_by_usern
 from users.schemas import UserRegisterSchema
 
 from posts.schemas import PostCreationSchema
-from posts.utils import create_new_post, edit_own_post, get_all_posts, get_one_post, set_mark_post
+from posts.utils import create_new_post, edit_own_post, get_all_posts, get_one_post, set_mark_post, delete_one_post
 
 app = FastAPI()
 connect_db()
@@ -62,7 +62,7 @@ def get_post(post_id: int, db: Session = Depends(get_session)):
 
 @app.get("/posts/{post_id}/is_like")
 def like_post(is_like: bool, post_id: int, db: Session = Depends(get_session), user_id=Depends(get_current_user)):
-    return set_mark_post(post_id, is_like, db, user_id)
+    return {"message": set_mark_post(post_id, is_like, db, user_id)}
 
 
 @app.post("/posts/create")
@@ -75,6 +75,11 @@ def create_post(user_id: int = Depends(get_current_user), db: Session = Depends(
 def edit_post(post_id: int, db: Session = Depends(get_session), post: PostCreationSchema = Depends(),
               user_id=Depends(get_current_user)):
     return {"message": edit_own_post(post_id, db, post)}
+
+
+@app.delete("/posts/{post_id}")
+def delete_post(post_id: int, db: Session = Depends(get_session), user_id=Depends(get_current_user)):
+    return {"message": delete_one_post(post_id, db, user_id)}
 
 
 if __name__ == "__main__":

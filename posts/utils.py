@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import  and_
 from fastapi import HTTPException, status
 
 from posts.models import Post
@@ -39,9 +40,18 @@ def set_mark_post(post_id: int, is_like: bool, db: Session, user_id: int):
         if post.user_id == user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You can't mark your own posts")
         if is_like:
-            post.like += 1
+            post.likes = int(post.likes or 0) + 1
         else:
-            post.dislike += 1
+            post.dislikes = int(post.likes or 0) + 1
         db.add(post)
         db.commit()
+        return "Marked successfully"
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
+
+def delete_one_post(post_id: int, db: Session, user_id: int):
+    if db.query(Post).filter(and_(Post.id == post_id, Post.user_id == user_id)).one_or_none():
+        db.query(Post).filter(Post.id == post_id).delete()
+        db.commit()
+        return "Deleted successfully"
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
