@@ -10,4 +10,5 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     mail = Column(String, unique=True, index=True)
     password_hash = Column(String)
+    token = Column(String)
     post = relationship("Post")
