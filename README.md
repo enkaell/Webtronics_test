@@ -1,19 +1,19 @@
 # Webtronics FastAPI test task
-На архитектуре REST разработано приложение с функционалом
-- Аутентификации и авторизации
-- CRUD Постов пользователя
-- Возможность ставить лайки/дизлайки на посты других пользователей
-- Добавлена валидация с emailhunter.co
-- Написаны тесты на готовый функционал
+Application based on REST architecture has:
+- Auth
+- CRUD user posts
+- Posts likes/dislikes
+- Emailhunter.co validation
+- Test coverage
 
-## Запуск проекта
- - Создать виртуальное окружение
- - С помощью pip установить зависимости
- - Прогнать pytest из корневой директории
- - Запустить python main.py
-## Предложения по доработке
+## Run project
+ - Create env
+ - pip install requirements.txt
+ - pytest 
+ - run main.py
+## Things to do
 
-- Переехать на PostgreSQL
+- PostgreSQL
 - Docker-Compose: DB+Web+Pytest
-- Асинхрон
+- Async
 
